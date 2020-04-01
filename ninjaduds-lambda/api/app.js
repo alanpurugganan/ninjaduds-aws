@@ -29,10 +29,12 @@ exports.helloWorld = async (event, context) => {
 
         const s3 = new AWS.S3();
 
+        let body = JSON.parse(event.body);
+
         const destparams = {
             Bucket: process.env.Bucket,
             Key: 'testing/test1.txt',
-            Body: event.body.message,
+            Body: body.message,
             ContentType: "text/plain"
         };
 
