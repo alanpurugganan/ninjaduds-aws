@@ -32,7 +32,7 @@ exports.helloWorld = async (event, context) => {
         const destparams = {
             Bucket: process.env.Bucket,
             Key: 'testing/test1.txt',
-            Body: event.Body.message,
+            Body: event.body.message,
             ContentType: "text/plain"
         };
 
