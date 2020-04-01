@@ -8,6 +8,10 @@ Description: >
 #create a s3 bucket
 #aws s3 mb s3://bucket-name
 
+#NOTES:
+# Changing Lambda function resource name or mapping to new handler name does NOT change API Endpoint domain
+# Changing Lamdba API endpoint path does not change Endpoint Url domain
+
 #PARAMETERS DO NOT WORK (YET!)
 # Parameters: 
 #   EnvTypeParam: 
@@ -45,7 +49,7 @@ Resources:
           HelloWorld:
             Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
             Properties:
-              Path: /hello-world-2
+              Path: /read-examples
               Method: get
 
   WriteExamplesxxLocalxx:
@@ -59,7 +63,7 @@ Resources:
         HelloWorld:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
-            Path: /hello-world
+            Path: /write-examples
             Method: post
 
 #Outputs:
