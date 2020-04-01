@@ -21,44 +21,48 @@ if(process.env.EnvType == 'xxLocalxx'){
 
 exports.helloWorld = async (event, context) => {
     try {
-        // const ret = await axios(url);
-        response = {
-            'statusCode': 200,
-            'body': JSON.stringify({
-                message: `hello world2 ${process.env.EnvType}`
-                // location: ret.data.trim()
-            })
-        }
 
+        let requestBody = JSON.parse(event.body);
+        
+        //=================
+        //S3 Write examples
+        //=================
         const s3 = new AWS.S3();
-
-        let body = JSON.parse(event.body);
-
-        const destparams = {
+        
+        let s3Params = {
             Bucket: process.env.Bucket,
             Key: 'testing/test1.txt',
-            Body: body.message,
+            Body: requestBody.message,
             ContentType: "text/plain"
         };
         
-        const putResult = await s3.putObject(destparams).promise();
-
-        // Create DynamoDB document client
-        var dbParams = {
+        let putResult = await s3.putObject(s3Params).promise();
+        
+        //=================
+        //Db Write examples
+        //=================
+        let dbParams = {
             TableName: process.env.TableName,
             Item: {
                 'PK': 'alan.purugganan@gmail.com',
-                'SK': 'test',
-                'message': body.message
+                'SK': new Date().toISOString(),
+                'message': requestBody.message
             }
         }
-
+        
         let dbResult = await docClient.put(dbParams).promise();
-        let x = 9;
-
-
-
-
+        
+        //=================
+        //Setup Response
+        //=================
+        response = {
+            'statusCode': 200,
+            'body': JSON.stringify({
+                message: `Data stored`
+            })
+        }
+        
+        
     } catch (err) {
         console.log(err);
         return err;
@@ -69,10 +73,22 @@ exports.helloWorld = async (event, context) => {
 
 exports.helloWorld2 = async (event, context) => {
     try {
-        // const ret = await axios(url);
+       
+        //=================
+        //S3 Read examples
+        //=================
         const s3 = new AWS.S3();
 
-        var dbParams = {
+        let s3params = {
+            Bucket: process.env.Bucket,
+            Key: 'testing/test1.txt'
+        };
+        let s3Result = await s3.getObject(s3params).promise();
+
+        //=================
+        //Db Read examples
+        //=================
+        let dbParams = {
             TableName: process.env.TableName,
             KeyConditionExpression: 'PK = :hkey', //and RangeKey > :rkey',
             ExpressionAttributeValues: {
@@ -82,22 +98,16 @@ exports.helloWorld2 = async (event, context) => {
         
         let dbResult = await docClient.query(dbParams).promise();
 
-        const s3params = {
-            Bucket: process.env.Bucket,
-            Key: 'testing/test1.txt'
-        };
-        var s3Result = await s3.getObject(s3params).promise();
-        
-
-        let body = {};
-
-        body.dbResult = dbResult.Items;
-        body.s3Result = s3Result.Body.toString('utf-8');
-
+        //=================
+        //Setup Response
+        //=================
         response = {
             'statusCode': 200,
-            'body': JSON.stringify(body)
-        }
+            'body': JSON.stringify({
+                dbResult : dbResult.Items,
+                s3Result : s3Result.Body.toString('utf-8')
+            })
+        };
 
     } catch (err) {
         console.log(err);
