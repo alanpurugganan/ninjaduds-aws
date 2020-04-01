@@ -4,6 +4,7 @@
 let AWS = require("aws-sdk");
 let response;
 let dynamodb = null;
+let docClient = null;
 
 if(process.env.EnvType == 'xxLocalxx'){
     let config = {
@@ -12,8 +13,10 @@ if(process.env.EnvType == 'xxLocalxx'){
     };
 
     dynamodb = new AWS.DynamoDB(config);
+    docClient = new AWS.DynamoDB.DocumentClient(config);
 }else{
-    dynamodb = new AWS.DynamoDB(); 
+    dynamodb = new AWS.DynamoDB();
+    docClient = new AWS.DynamoDB.DocumentClient(); 
 }
 
 exports.helloWorld = async (event, context) => {
@@ -37,8 +40,24 @@ exports.helloWorld = async (event, context) => {
             Body: body.message,
             ContentType: "text/plain"
         };
-
+        
         const putResult = await s3.putObject(destparams).promise();
+
+        // Create DynamoDB document client
+        var dbParams = {
+            TableName: process.env.TableName,
+            Item: {
+                'PK': 'alan.purugganan@gmail.com',
+                'SK': 'test',
+                'message': body.message
+            }
+        }
+
+        let dbResult = await docClient.put(dbParams).promise();
+        let x = 9;
+
+
+
 
     } catch (err) {
         console.log(err);
@@ -52,37 +71,33 @@ exports.helloWorld2 = async (event, context) => {
     try {
         // const ret = await axios(url);
         const s3 = new AWS.S3();
-        
-        response = {
-            'statusCode': 200,
-            'body': JSON.stringify({
-                message: `hello world2`
-                // location: ret.data.trim()
-            })
-        }
 
-        let table = process.env.TableName;
-        let params = {
-            TableName: table,
-            Key: {
-                'PK': {S:"alan.purugganan@gmail.com"},
-                'SK': {S:"ORDER#1"}
+        var dbParams = {
+            TableName: process.env.TableName,
+            KeyConditionExpression: 'PK = :hkey', //and RangeKey > :rkey',
+            ExpressionAttributeValues: {
+              ':hkey': 'alan.purugganan@gmail.com'
             }
         };
-
-        let result = await dynamodb.getItem(params).promise()
-        console.log(JSON.stringify(result))
+        
+        let dbResult = await docClient.query(dbParams).promise();
 
         const s3params = {
             Bucket: process.env.Bucket,
             Key: 'testing/test1.txt'
         };
-        var data = await s3.getObject(s3params).promise();
-        console.log(data.Body.toString('utf-8'))
-
-
-
+        var s3Result = await s3.getObject(s3params).promise();
         
+
+        let body = {};
+
+        body.dbResult = dbResult.Items;
+        body.s3Result = s3Result.Body.toString('utf-8');
+
+        response = {
+            'statusCode': 200,
+            'body': JSON.stringify(body)
+        }
 
     } catch (err) {
         console.log(err);
