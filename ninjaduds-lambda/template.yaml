@@ -34,11 +34,11 @@ Globals:
         Bucket: ninjaduds-prod-alan-purugganan
 
 Resources:
-  HelloWorld2xxLocalxx:
+  ReadExamplesxxLocalxx:
       Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
       Properties:
         CodeUri: api/
-        Handler: app.helloWorld2
+        Handler: app.readExamples
         Runtime: nodejs12.x
         Role: arn:aws:iam::518635498583:role/NinjaDudsRole
         Events:
@@ -48,11 +48,11 @@ Resources:
               Path: /hello-world-2
               Method: get
 
-  HelloWorldxxLocalxx:
+  WriteExamplesxxLocalxx:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       CodeUri: api/
-      Handler: app.helloWorld
+      Handler: app.writeExamples
       Runtime: nodejs12.x
       Role: arn:aws:iam::518635498583:role/NinjaDudsRole
       Events:

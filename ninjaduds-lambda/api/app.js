@@ -19,7 +19,7 @@ if(process.env.EnvType == 'xxLocalxx'){
     docClient = new AWS.DynamoDB.DocumentClient(); 
 }
 
-exports.helloWorld = async (event, context) => {
+exports.writeExamples = async (event, context) => {
     try {
 
         let requestBody = JSON.parse(event.body);
@@ -71,7 +71,7 @@ exports.helloWorld = async (event, context) => {
     return response;
 };
 
-exports.helloWorld2 = async (event, context) => {
+exports.readExamples = async (event, context) => {
     try {
        
         //=================
