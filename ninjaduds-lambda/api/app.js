@@ -19,6 +19,51 @@ if(process.env.EnvType == 'xxLocalxx'){
     docClient = new AWS.DynamoDB.DocumentClient(); 
 }
 
+exports.s3Upload = async (event, context) => {
+    try {
+
+        let requestBody = JSON.parse(event.body);
+        
+        //=================
+        //S3 Write examples
+        //=================
+        const s3 = new AWS.S3();
+
+        data = requestBody.message;
+
+        if(requestBody.isBase64Encoded){
+            data = Buffer.from(requestBody.message, 'base64');
+        }
+        
+        let s3Params = {
+            Bucket: process.env.Bucket,
+            Key: requestBody.key,
+            Body: data,
+            ContentType: requestBody.contentType
+        };
+        
+        let putResult = await s3.putObject(s3Params).promise();
+        
+        //=================
+        //Setup Response
+        //=================
+        response = {
+            'statusCode': 200,
+            'body': JSON.stringify({
+                message: `Data stored`,
+                key: requestBody.key
+            })
+        }
+        
+        
+    } catch (err) {
+        console.log(err);
+        return err;
+    }
+
+    return response;
+};
+
 exports.writeExamples = async (event, context) => {
     try {
 

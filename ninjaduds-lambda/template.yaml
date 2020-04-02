@@ -38,6 +38,20 @@ Globals:
         Bucket: ninjaduds-prod-alan-purugganan
 
 Resources:
+  S3UploadxxLocalxx:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: api/
+      Handler: app.s3Upload
+      Runtime: nodejs12.x
+      Role: arn:aws:iam::518635498583:role/NinjaDudsRole
+      Events:
+        NinjaDuds:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /s3-upload
+            Method: post
+
   ReadExamplesxxLocalxx:
       Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
       Properties:
@@ -46,7 +60,7 @@ Resources:
         Runtime: nodejs12.x
         Role: arn:aws:iam::518635498583:role/NinjaDudsRole
         Events:
-          HelloWorld:
+          NinjaDuds:
             Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
             Properties:
               Path: /read-examples
@@ -60,7 +74,7 @@ Resources:
       Runtime: nodejs12.x
       Role: arn:aws:iam::518635498583:role/NinjaDudsRole
       Events:
-        HelloWorld:
+        NinjaDuds:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
             Path: /write-examples
