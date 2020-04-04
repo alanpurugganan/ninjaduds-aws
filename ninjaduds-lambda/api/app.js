@@ -19,6 +19,33 @@ if(process.env.EnvType == 'xxLocalxx'){
     docClient = new AWS.DynamoDB.DocumentClient(); 
 }
 
+exports.dbUpdate = async (event, context) => {
+    try {
+
+        let requestBody = JSON.parse(event.body);
+        
+        let dbResult = await docClient.update(requestBody).promise();
+        
+        //=================
+        //Setup Response
+        //=================
+        response = {
+            'statusCode': 200,
+            'body': JSON.stringify("success")
+        }
+        
+    } catch (err) {
+        console.log(err);
+       
+        response = {
+            'statusCode': 500,
+            'body': JSON.stringify(err)
+        }
+    }
+
+    return response;
+};
+
 exports.dbGet = async (event, context) => {
     try {
 
