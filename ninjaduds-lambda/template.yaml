@@ -38,6 +38,35 @@ Globals:
         Bucket: ninjaduds-prod-alan-purugganan
 
 Resources:
+  DBPutxxLocalxx:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: api/
+      Handler: app.dbPut
+      Runtime: nodejs12.x
+      Role: arn:aws:iam::518635498583:role/NinjaDudsRole
+      Events:
+        NinjaDuds:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /db-put
+            Method: post
+  
+
+  DBGetxxLocalxx:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: api/
+      Handler: app.dbGet
+      Runtime: nodejs12.x
+      Role: arn:aws:iam::518635498583:role/NinjaDudsRole
+      Events:
+        NinjaDuds:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /db-get
+            Method: post
+      
   S3DownloadxxLocalxx:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
