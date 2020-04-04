@@ -19,6 +19,37 @@ if(process.env.EnvType == 'xxLocalxx'){
     docClient = new AWS.DynamoDB.DocumentClient(); 
 }
 
+exports.dbQuery = async (event, context) => {
+    try {
+
+        let requestBody = JSON.parse(event.body);
+        
+        let dbResult = await docClient.query(requestBody).promise();
+
+        data = [];
+        if(dbResult.Count > 0)
+            data = dbResult.Items;
+        
+        //=================
+        //Setup Response
+        //=================
+        response = {
+            'statusCode': 200,
+            'body': JSON.stringify(data)
+        }
+        
+    } catch (err) {
+        console.log(err);
+       
+        response = {
+            'statusCode': 500,
+            'body': JSON.stringify(err)
+        }
+    }
+
+    return response;
+};
+
 exports.dbDelete = async (event, context) => {
     try {
 
@@ -79,13 +110,18 @@ exports.dbGet = async (event, context) => {
         let requestBody = JSON.parse(event.body);
         
         let dbResult = await docClient.get(requestBody).promise();
-        
+
+        let data = {};
+
+        if(dbResult.hasOwnProperty('Item'))
+            data = dbResult.Item;
+
         //=================
         //Setup Response
         //=================
         response = {
             'statusCode': 200,
-            'body': JSON.stringify(dbResult.Item)
+            'body': JSON.stringify(data)
         }
         
     } catch (err) {
