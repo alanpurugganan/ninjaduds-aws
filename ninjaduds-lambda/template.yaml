@@ -38,6 +38,20 @@ Globals:
         Bucket: ninjaduds-prod-alan-purugganan
 
 Resources:
+  DBDeletexxLocalxx:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: api/
+      Handler: app.dbDelete
+      Runtime: nodejs12.x
+      Role: arn:aws:iam::518635498583:role/NinjaDudsRole
+      Events:
+        NinjaDuds:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /db-delete
+            Method: post
+
   DBUpdatexxLocalxx:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
